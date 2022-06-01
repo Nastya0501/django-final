@@ -1,78 +1,34 @@
 import uuid
 from django.db import models
 
+# Create your models here.
 class BookJournalBase(models.Model):
-    name = models.CharField(max_length=500, null=True)
-    price = models.IntegerField(default=0)
-    desc = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    price = models.FloatField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.name or ''
+
 
 class Book(BookJournalBase):
-    genre = models.CharField(max_length=500, null=True)
-    num_pages = models.IntegerField(default=0)
-    is_active = models.BooleanField(default=True)
+    num_pages = models.IntegerField(null=True, blank=True)
+    genre = models.CharField(max_length=100, null=True, blank=True)
 
-    def __str__(self):
-        return f'{self.id}: {self.title}'
+    class Meta:
+        verbose_name = 'Book'
+        verbose_name_plural = 'Books'
 
-    def check_num_pages(self):
-        if self.num_pages > 10:
-            return True
-        return False
-
-    @classmethod
-    def active_books(cls):
-        cls.objects.filter(is_active=True)
-
-    @staticmethod
-    def compare_books(b1, b2):
-        return b1.num_pages > b2.num_pages
-
-    def to_json(self):
-        return {
-            'id': self.id,
-            'is_active': self.is_active
-        }
-
-    def to_json_detail(self):
-        return {
-            'id': self.id,
-            'is_active': self.is_active,
-            'num_pages': self.num_pages
-        }
 
 class Journal(BookJournalBase):
-    journal_type_choices = ((1, "Bullet"), (2, "Food"), (3, "Travel"), (4, "Sport"))
-    journal_type = models.IntegerField(choices=journal_type_choices, default=1)
-    publisher = models.TextField()
-    is_active = models.BooleanField(default=True)
+    type = models.CharField(max_length=100, choices=[('0', 'Bullet'), ('1', 'Food'), ('2', 'Travel'), ('3', 'Sport')],
+                            default=0)
+    publisher = models.CharField(max_length=100, null=True, blank=True)
 
-    def __str__(self):
-        return f'{self.id}: {self.title}'
-
-    def check_num_pages(self):
-        if self.num_pages > 10:
-            return True
-        return False
-
-    @classmethod
-    def active_books(cls):
-        cls.objects.filter(is_active=True)
-
-    @staticmethod
-    def compare_books(b1, b2):
-        return b1.num_pages > b2.num_pages
-
-    def to_json(self):
-        return {
-            'id': self.id,
-            'is_active': self.is_active
-        }
-
-    def to_json_detail(self):
-        return {
-            'id': self.id,
-            'is_active': self.is_active,
-            'num_pages': self.num_pages
-        }
-
+    class Meta:
+        verbose_name = 'Journal'
+        verbose_name_plural = 'Journals'
